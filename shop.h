@@ -31,6 +31,7 @@ signals:
 
     void get_users_list(const QString &login);
 
+    void sent_db(DataBase* DB);
 
 public slots:
     void set_person(const QString &login);

@@ -8,8 +8,6 @@ registration::registration(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::registration) {
     ui->setupUi(this);
-    db = new DataBase;
-    db->connectToDataBase();
 }
 
 registration::~registration() {
@@ -19,7 +17,6 @@ registration::~registration() {
 void registration::set_db(DataBase *DB)
 {
     db = DB;
-    db->connectToDataBase();
 }
 
 void registration::clear_window() {

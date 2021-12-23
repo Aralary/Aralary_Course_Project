@@ -39,9 +39,9 @@ void cur_game::set_game(const QString &login, const QString &gname) {
     }
 }
 
-void cur_game::set_db(DataBase*)
+void cur_game::set_db(DataBase* DB)
 {
-//    db->connectToDataBase();
+    db = DB;
 }
 
 //кнопка купить

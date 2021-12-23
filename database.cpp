@@ -1,9 +1,11 @@
 #include "database.h"
 #include <iostream>
 
-DataBase::DataBase(QObject *parent) : QObject(parent) {}
+DataBase::DataBase(QObject *parent) : QObject(parent) {
+    connectToDataBase();
+}
 
-DataBase::~DataBase() { }
+DataBase::~DataBase() { closeDataBase(); }
 
 /* Методы для подключения к базе данных
  * */
@@ -112,50 +114,50 @@ void DataBase::change_favourite(const QString &login, const QString &game) {
 void DataBase::set_table(const QString &table) { TABLE = table; }
 
 void DataBase::add_money(const QString &login, const QString &add_cash, const QString &old_cash) {
-        g_lock.lock();
-        QSqlQuery query;
-        QString new_cash;
-        double old = old_cash.toDouble();
-        double add = add_cash.toDouble();
-        std::ostringstream stream;
-        stream << (old + add);
-        std::string res = stream.str();
-        new_cash = QString::fromStdString(res);
-        query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
-        query.bindValue(":Log", login);
-        query.bindValue(":Cash", new_cash);
-        query.exec();
-        g_lock.unlock();
+    g_lock.lock();
+    QSqlQuery query;
+    QString new_cash;
+    double old = old_cash.toDouble();
+    double add = add_cash.toDouble();
+    std::ostringstream stream;
+    stream << (old + add);
+    std::string res = stream.str();
+    new_cash = QString::fromStdString(res);
+    query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
+    query.bindValue(":Log", login);
+    query.bindValue(":Cash", new_cash);
+    query.exec();
+    g_lock.unlock();
 }
 
 void DataBase::reduce_money(const QString &login, const QString &red_cash, const QString &old_cash) {
-        g_lock.lock();
-        QSqlQuery query;
-        QString new_cash;
-        double old = old_cash.toDouble();
-        double red = red_cash.toDouble();
-        std::ostringstream stream;
-        stream << (old - red);
-        std::string res = stream.str();
-        new_cash = QString::fromStdString(res);
-        query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
-        query.bindValue(":Log", login);
-        query.bindValue(":Cash", new_cash);
-        query.exec();
-        g_lock.unlock();
+    g_lock.lock();
+    QSqlQuery query;
+    QString new_cash;
+    double old = old_cash.toDouble();
+    double red = red_cash.toDouble();
+    std::ostringstream stream;
+    stream << (old - red);
+    std::string res = stream.str();
+    new_cash = QString::fromStdString(res);
+    query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
+    query.bindValue(":Log", login);
+    query.bindValue(":Cash", new_cash);
+    query.exec();
+    g_lock.unlock();
 }
 
 QString DataBase::get_money(const QString &login) {
-        QSqlQuery query;
-        query.prepare("Select Money FROM Users WHERE Login = :Log");
-        query.bindValue(":Log", login);
-        query.exec();
-        query.first();
-        double cash = query.value(0).toDouble();
-        std::ostringstream stream;
-        stream << cash;
-        std::string res = stream.str();
-        return QString::fromStdString(res);
+    QSqlQuery query;
+    query.prepare("Select Money FROM Users WHERE Login = :Log");
+    query.bindValue(":Log", login);
+    query.exec();
+    query.first();
+    double cash = query.value(0).toDouble();
+    std::ostringstream stream;
+    stream << cash;
+    std::string res = stream.str();
+    return QString::fromStdString(res);
 }
 
 bool DataBase::get_favourite(const QString &login, const QString &gname) {

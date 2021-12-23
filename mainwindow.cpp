@@ -8,19 +8,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label->clear();
 
     db = new DataBase();
-    db->connectToDataBase();
 
     reg_window = new registration();
-//    connect(this, &MainWindow::sent_db, reg_window, &registration::set_db);
+    connect(this, &MainWindow::sent_db, reg_window, &registration::set_db);
     connect(reg_window, &registration::firstWindow, this, &MainWindow::show);
 
     rec_window = new pass_recovery();
     connect(rec_window, &pass_recovery::firstWindow, this, &MainWindow::show);
-//    connect(this, &MainWindow::sent_db, rec_window, &pass_recovery::set_db);
+    connect(this, &MainWindow::sent_db, rec_window, &pass_recovery::set_db);
 
     shop_window = new Shop();
     connect(shop_window, &Shop::firstWindow, this, &MainWindow::show);
-//    connect(this, &MainWindow::sent_db, shop_window, &Shop::set_db);
+    connect(this, &MainWindow::sent_db, shop_window, &Shop::set_db);
     connect(this, &MainWindow::sent_person, shop_window, &Shop::set_person);
 }
 
@@ -32,7 +31,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_reg_button_clicked() {
-//    emit sent_db(db);
+    emit sent_db(db);
     clear_line();
     reg_window->show();
     hide();
@@ -69,7 +68,7 @@ void MainWindow::on_enter_button_clicked() {
         close();
         shop_window->show();
         std::thread th([this, log]() {
-//            emit sent_db(this->db);
+            emit sent_db(this->db);
             emit sent_person(log);
         });
         th.detach();
@@ -82,7 +81,7 @@ void MainWindow::on_enter_button_clicked() {
 void MainWindow::on_refresh_pass_button_clicked() {
     clear_line();
     hide();
-//    emit sent_db(db);
+    emit sent_db(db);
     rec_window->show();
 }
 

@@ -5,8 +5,6 @@ users_list::users_list(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::users_list) {
     ui->setupUi(this);
-    db = new DataBase;
-    db->connectToDataBase();
 }
 
 users_list::~users_list() {
@@ -28,5 +26,4 @@ void users_list::refresh_list(const QString &login) {
 void users_list::set_db(DataBase *DB)
 {
     db = DB;
-    db->connectToDataBase();
 }

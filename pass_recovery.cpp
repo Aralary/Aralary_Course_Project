@@ -6,8 +6,6 @@ pass_recovery::pass_recovery(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::pass_recovery) {
     ui->setupUi(this);
-    db = new DataBase;
-    db->connectToDataBase();
 }
 
 pass_recovery::~pass_recovery() {
@@ -17,7 +15,6 @@ pass_recovery::~pass_recovery() {
 void pass_recovery::set_db(DataBase *DB)
 {
     db = DB;
-    db->connectToDataBase();
 }
 
 //кнопка назад

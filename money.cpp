@@ -7,8 +7,6 @@ money::money(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::money) {
     ui->setupUi(this);
-    db = new DataBase;
-    db->connectToDataBase();
 }
 
 money::~money() {
@@ -29,7 +27,6 @@ void money::set_person(const QString &log, const QString &money) {
 void money::set_db(DataBase *DB)
 {
     db = DB;
-    db->connectToDataBase();
 }
 
 //кнопка пополнить с проверками
