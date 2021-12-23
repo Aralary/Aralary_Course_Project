@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    checker.cpp \
     cur_game.cpp \
     database.cpp \
     main.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
     users_list.cpp
 
 HEADERS += \
+    checker.h \
     cur_game.h \
     database.h \
     mainwindow.h \

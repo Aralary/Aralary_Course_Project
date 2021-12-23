@@ -2,7 +2,7 @@
 
 #include <QApplication>
 #include <QMessageBox>
-#include<QGroupBox>
+#include <QGroupBox>
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

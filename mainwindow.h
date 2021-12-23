@@ -6,6 +6,8 @@
 #include "shop.h"
 #include "pass_recovery.h"
 #include "database.h"
+#include "checker.h"
+#include <thread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,8 +21,9 @@ public:
 
     ~MainWindow();
 
-private slots:
-    void on_reg_button_clicked();
+private
+    slots:
+            void on_reg_button_clicked();
 
     void on_show_pass0_stateChanged(int);
 
@@ -31,7 +34,9 @@ private slots:
 
     signals:
 
-    void sent_person(const QString& login);
+            void sent_person(
+    const QString &login
+    );
 
 
 private:

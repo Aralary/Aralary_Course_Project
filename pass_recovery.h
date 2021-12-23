@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "database.h"
+#include "checker.h"
+#include <thread>
 
 namespace Ui {
     class pass_recovery;
@@ -15,8 +17,11 @@ public:
     explicit pass_recovery(QWidget *parent = nullptr);
 
     ~pass_recovery();
+
     void en_lang();
+
     void ru_lang();
+
     signals:
             void firstWindow();
 
@@ -31,6 +36,7 @@ private
     void on_checkBox_2_stateChanged(int);
 
     void clear_window();
+
 private:
     Ui::pass_recovery *ui;
 };

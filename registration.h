@@ -4,6 +4,8 @@
 #include "database.h"
 #include<regex>
 #include<stdio.h>
+#include "checker.h"
+#include <thread>
 
 #define REGISTRATION_H
 
@@ -28,10 +30,11 @@ public:
             void firstWindow();
 private:
 
-            void clear_window();
+    void clear_window();
 
-private slots:
-    void on_pushButton_clicked();
+private
+    slots:
+            void on_pushButton_clicked();
 
     void on_checkBox_2_stateChanged(int);
 
@@ -41,7 +44,6 @@ private slots:
     void on_pushButton_3_clicked();
 
 private:
-    bool Email_check(const QString &email);
 
     Ui::registration *ui;
 };

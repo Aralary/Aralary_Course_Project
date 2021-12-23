@@ -33,20 +33,23 @@ bool DataBase::check_person(const QString &login, const QString &password) {
 }
 
 void DataBase::change_password(const QString &login, const QString &password) {
+    g_lock.lock();
     QSqlQuery query;
     query.prepare("UPDATE Users SET Password = :Pas WHERE Login = :Log");
     query.bindValue(":Log", login);
     query.bindValue(":Pas", password);
     query.exec();
+    g_lock.unlock();
 }
 
-void DataBase::change_phone(const QString &login, const QString &phone)
-{
+void DataBase::change_phone(const QString &login, const QString &phone) {
+    g_lock.lock();
     QSqlQuery query;
     query.prepare("UPDATE Users SET Phone = :Ph WHERE Login = :Log");
     query.bindValue(":Log", login);
     query.bindValue(":Ph", phone);
     query.exec();
+    g_lock.unlock();
 }
 
 bool DataBase::person_exist(const QString &login) {
@@ -61,8 +64,7 @@ bool DataBase::person_exist(const QString &login) {
     return false;
 }
 
-bool DataBase::game_check(const QString &login, const QString &gname)
-{
+bool DataBase::game_check(const QString &login, const QString &gname) {
     QSqlQuery query;
     query.prepare("SELECT * FROM person_games WHERE Login = :Log AND Gname = :Game");
     query.bindValue(":Log", login);
@@ -75,8 +77,7 @@ bool DataBase::game_check(const QString &login, const QString &gname)
     return false;
 }
 
-QString DataBase::phone(const QString &login)
-{
+QString DataBase::phone(const QString &login) {
     QSqlQuery query;
     query.prepare("Select Phone FROM Users WHERE Login = :Log");
     query.bindValue(":Log", login);
@@ -86,8 +87,7 @@ QString DataBase::phone(const QString &login)
     return phone;
 }
 
-QString DataBase::get_BirthDate(const QString &login)
-{
+QString DataBase::get_BirthDate(const QString &login) {
     QSqlQuery query;
     query.prepare("Select Birth FROM Users WHERE Login = :Log");
     query.bindValue(":Log", login);
@@ -97,58 +97,60 @@ QString DataBase::get_BirthDate(const QString &login)
     return phone;
 }
 
-void DataBase::change_favourite(const QString &login, const QString &game)
-{
+void DataBase::change_favourite(const QString &login, const QString &game) {
+    g_lock.lock();
     QSqlQuery query;
     query.prepare("UPDATE person_games SET IsFavourite = :flag WHERE Login = :log AND Gname = :gname");
-    bool f = !(get_favourite(login,game));
+    bool f = !(get_favourite(login, game));
     query.bindValue(":flag", f);
     query.bindValue(":log", login);
     query.bindValue(":gname", game);
     query.exec();
+    g_lock.unlock();
 }
 
 void DataBase::set_table(const QString &table) { TABLE = table; }
 
-void DataBase::add_money(const QString &login, const QString &add_cash, const QString &old_cash)
-{
-    if(TABLE == "Users"){
+void DataBase::add_money(const QString &login, const QString &add_cash, const QString &old_cash) {
+    if (TABLE == "Users") {
+        g_lock.lock();
         QSqlQuery query;
         QString new_cash;
         double old = old_cash.toDouble();
         double add = add_cash.toDouble();
         std::ostringstream stream;
-        stream<<(old+add);
+        stream << (old + add);
         std::string res = stream.str();
         new_cash = QString::fromStdString(res);
         query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
         query.bindValue(":Log", login);
         query.bindValue(":Cash", new_cash);
         query.exec();
+        g_lock.unlock();
     }
 }
 
-void DataBase::reduce_money(const QString &login, const QString &red_cash, const QString &old_cash)
-{
-    if(TABLE == "Users"){
+void DataBase::reduce_money(const QString &login, const QString &red_cash, const QString &old_cash) {
+    if (TABLE == "Users") {
+        g_lock.lock();
         QSqlQuery query;
         QString new_cash;
         double old = old_cash.toDouble();
         double red = red_cash.toDouble();
         std::ostringstream stream;
-        stream<<(old-red);
+        stream << (old - red);
         std::string res = stream.str();
         new_cash = QString::fromStdString(res);
         query.prepare("UPDATE Users SET Money = :Cash WHERE Login = :Log");
         query.bindValue(":Log", login);
         query.bindValue(":Cash", new_cash);
         query.exec();
+        g_lock.unlock();
     }
 }
 
-QString DataBase::get_money(const QString &login)
-{
-    if(TABLE == "Users"){
+QString DataBase::get_money(const QString &login) {
+    if (TABLE == "Users") {
         QSqlQuery query;
         query.prepare("Select Money FROM Users WHERE Login = :Log");
         query.bindValue(":Log", login);
@@ -156,18 +158,16 @@ QString DataBase::get_money(const QString &login)
         query.first();
         double cash = query.value(0).toDouble();
         std::ostringstream stream;
-        stream<<cash;
+        stream << cash;
         std::string res = stream.str();
         return QString::fromStdString(res);
-    }
-    else{
+    } else {
         return QString("error");
     }
 }
 
-bool DataBase::get_favourite(const QString &login, const QString &gname)
-{
-    if(TABLE == "person_games"){
+bool DataBase::get_favourite(const QString &login, const QString &gname) {
+    if (TABLE == "person_games") {
         QSqlQuery query;
         query.prepare("Select IsFavourite FROM person_games WHERE Login = :Log AND Gname = :gname");
         query.bindValue(":Log", login);
@@ -176,7 +176,7 @@ bool DataBase::get_favourite(const QString &login, const QString &gname)
         query.first();
         return query.value(0).toBool();
     }
-    qDebug()<<"error";
+    qDebug() << "error";
     return false;
 }
 
@@ -225,20 +225,21 @@ bool DataBase::openDataBase() {
     db.setDatabaseName("C:\\course_project\\" + DATABASE_NAME);
     if (db.open()) {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
+
 }
 
-/* Методы закрытия базы данных
+/* Метод закрытия базы данных
  * */
 void DataBase::closeDataBase() { db.close(); }
 
 /* Метод для создания таблицы в базе данных
  * */
 
-bool DataBase::createTable(const QString& table){
-    if(table == "person_games"){
+bool DataBase::createTable(const QString &table) {
+    if (table == "person_games") {
         QSqlQuery query;
         if (!query.exec("CREATE TABLE " + table +
                         " ("
@@ -256,29 +257,30 @@ bool DataBase::createTable(const QString& table){
     }
     return false;
 }
+
 bool DataBase::createTable() {
     /* В данном случае используется формирование сырого SQL-запроса
      * с последующим его выполнением.
      * */
-        QSqlQuery query;
-        if (!query.exec("CREATE TABLE " + TABLE +
-                        " ("
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        "Login VARCHAR(255)    NOT NULL,"
-                        "Password VARCHAR(255)    NOT NULL,"
-                        "Phone VARCHAR(255)    NOT NULL,"
-                        "Money VARCHAR(255)    NOT NULL,"
-                        "Fname VARCHAR(255)    NOT NULL,"
-                        "Sname VARCHAR(255)    NOT NULL,"
-                        "Birth VARCHAR(255)    NOT NULL,"
-                        "Email VARCHAR(255)    NOT NULL"
-                        " )")) {
-            qDebug() << "DataBase: error of create " << TABLE;
-            qDebug() << query.lastError().text();
-            return false;
-        } else {
-            return true;
-        }
+    QSqlQuery query;
+    if (!query.exec("CREATE TABLE " + TABLE +
+                    " ("
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    "Login VARCHAR(255)    NOT NULL,"
+                    "Password VARCHAR(255)    NOT NULL,"
+                    "Phone VARCHAR(255)    NOT NULL,"
+                    "Money VARCHAR(255)    NOT NULL,"
+                    "Fname VARCHAR(255)    NOT NULL,"
+                    "Sname VARCHAR(255)    NOT NULL,"
+                    "Birth VARCHAR(255)    NOT NULL,"
+                    "Email VARCHAR(255)    NOT NULL"
+                    " )")) {
+        qDebug() << "DataBase: error of create " << TABLE;
+        qDebug() << query.lastError().text();
+        return false;
+    } else {
+        return true;
+    }
     return false;
 }
 
@@ -288,7 +290,7 @@ bool DataBase::inserIntoTable(const QVariantList &data) {
     /* Запрос SQL формируется из QVariantList,
      * в который передаются данные для вставки в таблицу.
      * */
-    if(TABLE == "person_games"){
+    if (TABLE == "person_games") {
         QSqlQuery query;
         /* В начале SQL запрос формируется с ключами,
      * которые потом связываются методом bindValue
@@ -312,11 +314,10 @@ bool DataBase::inserIntoTable(const QVariantList &data) {
             qDebug() << "error insert into " << TABLE;
             qDebug() << query.lastError().text();
             return false;
-        } else {
-            return true;
         }
-    }
-    else if(TABLE == "Users"){
+
+        return true;
+    } else if (TABLE == "Users") {
         QSqlQuery query;
         /* В начале SQL запрос формируется с ключами,
      * которые потом связываются методом bindValue
@@ -373,43 +374,24 @@ bool DataBase::inserIntoTable(const QString &login, const QString &password,
     data.append(sname);
     data.append(birth);
     data.append(email);
-
-    if (inserIntoTable(data))
+    g_lock.lock();
+    if (inserIntoTable(data)) {
         return true;
-    else
-        return false;
+
+    }
+    g_lock.unlock();
+    return false;
 }
 
-bool DataBase::inserIntoTable(const QString &login, const QString &gname)
-{
+bool DataBase::inserIntoTable(const QString &login, const QString &gname) {
     QVariantList data;
     data.append(login);
     data.append(gname);
 
-    if (inserIntoTable(data))
-        return true;
-    else
-        return false;
-}
-
-/* Метод для удаления записи из таблицы
- * */
-bool DataBase::removeRecord(const int id) {
-    // Удаление строки из базы данных будет производитсья с помощью SQL-запроса
-    QSqlQuery query;
-
-    // Удаление производим по id записи, который передается в качестве аргумента
-    // функции
-    query.prepare("DELETE FROM " + TABLE + " WHERE id= :ID ;");
-    query.bindValue(":ID", id);
-
-    // Выполняем удаление
-    if (!query.exec()) {
-        qDebug() << "error delete row " << TABLE;
-        qDebug() << query.lastError().text();
-        return false;
-    } else {
+    g_lock.lock();
+    if (inserIntoTable(data)) {
         return true;
     }
+    g_lock.unlock();
     return false;
 }

@@ -16,11 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
     shop_window = new Shop();
     connect(shop_window, &Shop::firstWindow, this, &MainWindow::show);
     connect(this, &MainWindow::sent_person, shop_window, &Shop::set_person);
-
-
 }
 
 MainWindow::~MainWindow() {
+    delete rec_window;
+    delete reg_window;
+    delete shop_window;
     delete ui;
 }
 
@@ -31,7 +32,7 @@ void MainWindow::on_reg_button_clicked() {
     hide();
 }
 
-
+//checkbox (показать или скрыть пароль)
 void MainWindow::on_show_pass0_stateChanged(int) {
     if (ui->show_pass0->isChecked()) {
         ui->password->setEchoMode(QLineEdit::Normal);
@@ -40,30 +41,39 @@ void MainWindow::on_show_pass0_stateChanged(int) {
     }
 }
 
+
 void MainWindow::clear_line() {
-        ui->password->clear();
-        ui->login->clear();
-        ui->label->clear();
+    ui->password->clear();
+    ui->login->clear();
+    ui->label->clear();
 }
 
+//кнопка войти
 void MainWindow::on_enter_button_clicked() {
     ui->label->clear();
+    checker ch;
+    QString log = ui->login->text();
+    QString pas = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+    if (!ch.Login_check(log)) {
+        ui->label->setText("Incorrect login or password");
+        return;
+    }
     DataBase db;
     db.connectToDataBase();
-    QString log = ui->login->text();
-    QString pas = ui->password->text();
-
     if (db.check_person(log, pas)) {
         clear_line();
         close();
         shop_window->show();
-        emit sent_person(log);
+        std::thread th([this, log]() {
+            emit sent_person(log);
+        });
+        th.detach();
     } else {
         ui->label->setText("Incorrect login or password");
     }
 }
 
-
+//конопка забыл пароль
 void MainWindow::on_refresh_pass_button_clicked() {
     clear_line();
     hide();
