@@ -21,9 +21,9 @@ public:
 
     ~MainWindow();
 
-private
+    private
     slots:
-            void on_reg_button_clicked();
+    void on_reg_button_clicked();
 
     void on_show_pass0_stateChanged(int);
 
@@ -32,19 +32,18 @@ private
     void on_refresh_pass_button_clicked();
 
 
-    signals:
+signals:
 
-            void sent_person(
-    const QString &login
-    );
+    void sent_db(DataBase* DB);
 
+    void sent_person(const QString &login);
 
 private:
 
     void clear_line();
 
     bool f = 1;
-
+    DataBase *db;
     Ui::MainWindow *ui;
     registration *reg_window;
     Shop *shop_window;

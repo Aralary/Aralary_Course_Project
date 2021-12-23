@@ -7,7 +7,7 @@
 #include "checker.h"
 
 namespace Ui {
-    class cur_game;
+class cur_game;
 }
 
 class cur_game : public QDialog {
@@ -19,27 +19,24 @@ public:
     ~cur_game();
 
 
-public
-    slots:
-            void set_game(
-    const QString &login,
-    const QString &gname
-    );
+public slots:
+    void set_game(const QString &login, const QString &gname);
 
-    signals:
-            void refresh_money(
-    const QString &login
-    );
+    void set_db(DataBase* DB);
 
-private
+signals:
+    void refresh_money(const QString &login);
+
+    private
     slots:
-            void on_pushButton_clicked();
+    void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 
     void on_checkBox_stateChanged(int);
 
 private:
+    DataBase *db;
     Ui::cur_game *ui;
     QString LOGIN;
 };

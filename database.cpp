@@ -3,7 +3,7 @@
 
 DataBase::DataBase(QObject *parent) : QObject(parent) {}
 
-DataBase::~DataBase() { closeDataBase(); }
+DataBase::~DataBase() { }
 
 /* Методы для подключения к базе данных
  * */
@@ -112,7 +112,6 @@ void DataBase::change_favourite(const QString &login, const QString &game) {
 void DataBase::set_table(const QString &table) { TABLE = table; }
 
 void DataBase::add_money(const QString &login, const QString &add_cash, const QString &old_cash) {
-    if (TABLE == "Users") {
         g_lock.lock();
         QSqlQuery query;
         QString new_cash;
@@ -127,11 +126,9 @@ void DataBase::add_money(const QString &login, const QString &add_cash, const QS
         query.bindValue(":Cash", new_cash);
         query.exec();
         g_lock.unlock();
-    }
 }
 
 void DataBase::reduce_money(const QString &login, const QString &red_cash, const QString &old_cash) {
-    if (TABLE == "Users") {
         g_lock.lock();
         QSqlQuery query;
         QString new_cash;
@@ -146,11 +143,9 @@ void DataBase::reduce_money(const QString &login, const QString &red_cash, const
         query.bindValue(":Cash", new_cash);
         query.exec();
         g_lock.unlock();
-    }
 }
 
 QString DataBase::get_money(const QString &login) {
-    if (TABLE == "Users") {
         QSqlQuery query;
         query.prepare("Select Money FROM Users WHERE Login = :Log");
         query.bindValue(":Log", login);
@@ -161,9 +156,6 @@ QString DataBase::get_money(const QString &login) {
         stream << cash;
         std::string res = stream.str();
         return QString::fromStdString(res);
-    } else {
-        return QString("error");
-    }
 }
 
 bool DataBase::get_favourite(const QString &login, const QString &gname) {

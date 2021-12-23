@@ -8,7 +8,7 @@
 #include <thread>
 
 namespace Ui {
-    class money;
+class money;
 }
 
 class money : public QMainWindow {
@@ -21,24 +21,24 @@ public:
 
     void clear();
 
-    signals:
-            void firstWindow();
+signals:
+    void firstWindow();
 
     void send_status();
 
     void refresh(const QString &log);
 
 public slots:
-            void set_person(
-    const QString &log,
-    const QString &money
-    );
+    void set_person(const QString &log, const QString &money);
+
+    void set_db(DataBase* DB);
 private slots:
-            void on_pushButton_clicked();
+    void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 
 private:
+    DataBase *db;
     QString old_money;
     QString login;
     Ui::money *ui;

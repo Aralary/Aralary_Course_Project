@@ -67,18 +67,19 @@ public:
 
     bool createTable(const QString &table);
 
+    void closeDataBase();
 private:
 
-    void closeDataBase();       // Закрытие базы данных
+       // Закрытие базы данных
     bool openDataBase();        // Открытие базы данных
     bool restoreDataBase();     // Восстановление базы данных
     bool createTable();         // Создание базы таблицы в базе данных
 
-public
+    public
     slots:
-            bool inserIntoTable(
-    const QVariantList &data
-    );      // Добавление записей в таблицу
+    bool inserIntoTable(
+            const QVariantList &data
+            );      // Добавление записей в таблицу
 
 
 

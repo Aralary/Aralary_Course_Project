@@ -11,7 +11,7 @@
 #include <thread>
 
 namespace Ui {
-    class Shop;
+class Shop;
 }
 
 class Shop : public QMainWindow {
@@ -22,8 +22,8 @@ public:
 
     ~Shop();
 
-    signals:
-            void firstWindow();
+signals:
+    void firstWindow();
 
     void sent_login(const QString &login, const QString &money);
 
@@ -31,17 +31,16 @@ public:
 
     void get_users_list(const QString &login);
 
-public
-    slots:
-            void set_person(
-    const QString &login
-    );
+
+public slots:
+    void set_person(const QString &login);
+
+    void set_db(DataBase* DB);
 
     void set_status();
 
-private
-    slots:
-            void on_pushButton_clicked();
+private slots:
+    void on_pushButton_clicked();
 
 
     void on_pushButton_4_clicked();
@@ -63,7 +62,7 @@ private
 
 private:
     bool add_money_Flag = 0;
-
+    DataBase* db;
     users_list *ulist;
     cur_game *temp_game;
     QSqlQueryModel *model;

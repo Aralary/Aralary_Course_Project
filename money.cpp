@@ -4,9 +4,11 @@
 #include <QDebug>
 
 money::money(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::money) {
+    QMainWindow(parent),
+    ui(new Ui::money) {
     ui->setupUi(this);
+    db = new DataBase;
+    db->connectToDataBase();
 }
 
 money::~money() {
@@ -24,14 +26,18 @@ void money::set_person(const QString &log, const QString &money) {
     old_money = money;
 }
 
+void money::set_db(DataBase *DB)
+{
+    db = DB;
+    db->connectToDataBase();
+}
+
 //кнопка пополнить с проверками
 void money::on_pushButton_clicked() {
     checker ch;
-    DataBase db1;
     QString number = ui->lineEdit->text();
     QString add_cash = ui->lineEdit_2->text();
-    db1.connectToDataBase();
-    QString db_number = db1.phone(login);
+    QString db_number = db->phone(login);
 
     if (!ch.money_check(add_cash) || !ch.phone_check(number)) {
         QMessageBox::StandardButton reply = QMessageBox::information(this, "Error",
@@ -47,7 +53,7 @@ void money::on_pushButton_clicked() {
                                                                       "Do you want to debit money from the linked number?",
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
-                db1.add_money(login, add_cash, old_money);
+                db->add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
@@ -71,15 +77,15 @@ void money::on_pushButton_clicked() {
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
 
-                db1.change_phone(login, number);
-                db1.add_money(login, add_cash, old_money);
+                db->change_phone(login, number);
+                db->add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
                 emit refresh(login);
                 emit firstWindow();
             } else {
-                db1.add_money(login, add_cash, old_money);
+                db->add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
@@ -92,7 +98,7 @@ void money::on_pushButton_clicked() {
                                                                          "You don't need to enter a phone number to top up your balance",
                                                                          QMessageBox::StandardButton::Ok);
             if (reply == QMessageBox::Ok) {
-                db1.add_money(login, add_cash, old_money);
+                db->add_money(login, add_cash, old_money);
                 clear();
                 close();
                 emit send_status();

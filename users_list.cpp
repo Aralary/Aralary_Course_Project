@@ -2,9 +2,11 @@
 #include "ui_users_list.h"
 
 users_list::users_list(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::users_list) {
+    QMainWindow(parent),
+    ui(new Ui::users_list) {
     ui->setupUi(this);
+    db = new DataBase;
+    db->connectToDataBase();
 }
 
 users_list::~users_list() {
@@ -13,16 +15,18 @@ users_list::~users_list() {
 
 //слот чтобы обновить список пользователей
 void users_list::refresh_list(const QString &login) {
-    DataBase db;
-    db.connectToDataBase();
     QSqlQuery query;
     query.prepare("SELECT Login FROM Users WHERE Login <> :log");
     query.bindValue(":log", login);
     query.exec();
     QSqlQueryModel *model = new QSqlQueryModel();
     model->setQuery(std::move(query));
-
     ui->listView->setModel(model);
-
     ui->listView->show();
+}
+
+void users_list::set_db(DataBase *DB)
+{
+    db = DB;
+    db->connectToDataBase();
 }

@@ -7,7 +7,7 @@
 #include <thread>
 
 namespace Ui {
-    class pass_recovery;
+class pass_recovery;
 }
 
 class pass_recovery : public QMainWindow {
@@ -21,13 +21,14 @@ public:
     void en_lang();
 
     void ru_lang();
+public slots:
+    void set_db(DataBase* DB);
+signals:
+    void firstWindow();
 
-    signals:
-            void firstWindow();
-
-private
+    private
     slots:
-            void on_pushButton_clicked();
+    void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 
@@ -38,6 +39,7 @@ private
     void clear_window();
 
 private:
+    DataBase *db;
     Ui::pass_recovery *ui;
 };
 
