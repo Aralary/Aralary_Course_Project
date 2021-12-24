@@ -1,4 +1,4 @@
-#include "cur_game.h"
+#include "headers/cur_game.h"
 #include "ui_cur_game.h"
 
 cur_game::cur_game(QWidget *parent) :

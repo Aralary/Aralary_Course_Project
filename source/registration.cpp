@@ -1,6 +1,6 @@
-#include "registration.h"
+#include "headers/registration.h"
 #include "ui_registration.h"
-#include "mainwindow.h"
+#include "headers/mainwindow.h"
 #include <QMessageBox>
 #include <sstream>
 

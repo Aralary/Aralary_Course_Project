@@ -1,4 +1,4 @@
-#include "money.h"
+#include "headers/money.h"
 #include "ui_money.h"
 #include <iostream>
 #include <QDebug>

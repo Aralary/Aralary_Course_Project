@@ -1,4 +1,4 @@
-#include "shop.h"
+#include "headers/shop.h"
 #include "ui_shop.h"
 
 Shop::Shop(QWidget *parent) :
