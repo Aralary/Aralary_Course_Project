@@ -5,6 +5,7 @@
 #include <QDialog>
 #include "database.h"
 #include "checker.h"
+#include <QThread>
 
 namespace Ui {
 class cur_game;
@@ -22,8 +23,6 @@ public:
 public slots:
     void set_game(const QString &login, const QString &gname);
 
-    void set_db(DataBase* DB);
-
 signals:
     void refresh_money(const QString &login);
 
@@ -36,7 +35,6 @@ signals:
     void on_checkBox_stateChanged(int);
 
 private:
-    DataBase *db;
     Ui::cur_game *ui;
     QString LOGIN;
 };

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "database.h"
 #include <QSqlQueryModel>
+#include <QThread>
 
 namespace Ui {
 class users_list;
@@ -20,9 +21,7 @@ public:
 public slots:
     void refresh_list(const QString &login);
 
-    void set_db(DataBase* DB);
 private:
-    DataBase* db;
     Ui::users_list *ui;
 };
 

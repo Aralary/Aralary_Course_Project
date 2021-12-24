@@ -24,17 +24,13 @@ void money::set_person(const QString &log, const QString &money) {
     old_money = money;
 }
 
-void money::set_db(DataBase *DB)
-{
-    db = DB;
-}
 
 //кнопка пополнить с проверками
 void money::on_pushButton_clicked() {
     checker ch;
     QString number = ui->lineEdit->text();
     QString add_cash = ui->lineEdit_2->text();
-    QString db_number = db->phone(login);
+    QString db_number = DataBase::phone(login);
 
     if (!ch.money_check(add_cash) || !ch.phone_check(number)) {
         QMessageBox::StandardButton reply = QMessageBox::information(this, "Error",
@@ -50,7 +46,7 @@ void money::on_pushButton_clicked() {
                                                                       "Do you want to debit money from the linked number?",
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
-                db->add_money(login, add_cash, old_money);
+                DataBase::add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
@@ -74,15 +70,15 @@ void money::on_pushButton_clicked() {
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
 
-                db->change_phone(login, number);
-                db->add_money(login, add_cash, old_money);
+                DataBase::change_phone(login, number);
+                DataBase::add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
                 emit refresh(login);
                 emit firstWindow();
             } else {
-                db->add_money(login, add_cash, old_money);
+                DataBase::add_money(login, add_cash, old_money);
                 close();
                 clear();
                 emit send_status();
@@ -95,7 +91,7 @@ void money::on_pushButton_clicked() {
                                                                          "You don't need to enter a phone number to top up your balance",
                                                                          QMessageBox::StandardButton::Ok);
             if (reply == QMessageBox::Ok) {
-                db->add_money(login, add_cash, old_money);
+                DataBase::add_money(login, add_cash, old_money);
                 clear();
                 close();
                 emit send_status();

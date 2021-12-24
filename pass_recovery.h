@@ -5,6 +5,7 @@
 #include "database.h"
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 namespace Ui {
 class pass_recovery;
@@ -22,7 +23,6 @@ public:
 
     void ru_lang();
 public slots:
-    void set_db(DataBase* DB);
 signals:
     void firstWindow();
 
@@ -39,7 +39,6 @@ signals:
     void clear_window();
 
 private:
-    DataBase *db;
     Ui::pass_recovery *ui;
 };
 

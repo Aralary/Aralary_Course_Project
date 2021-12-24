@@ -12,6 +12,7 @@ SOURCES += \
     checker.cpp \
     cur_game.cpp \
     database.cpp \
+    inserter.cpp \
     main.cpp \
     mainwindow.cpp \
     money.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     checker.h \
     cur_game.h \
     database.h \
+    inserter.h \
     mainwindow.h \
     money.h \
     pass_recovery.h \

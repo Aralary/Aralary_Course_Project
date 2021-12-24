@@ -7,19 +7,15 @@ cur_game::cur_game(QWidget *parent) :
     ui->setupUi(this);
     ui->help_label->hide();
     ui->person->hide();
-    db = new DataBase;
-    db->connectToDataBase();
 }
 
 cur_game::~cur_game() {
     delete ui;
-    db->closeDataBase();
 }
 
 //заполнить страницу входными данными, полученными из окна Shop
 void cur_game::set_game(const QString &login, const QString &gname) {
     LOGIN = login;
-    db->set_table("Games");
     QSqlQuery query;
     query.prepare("SELECT Price, Genre, Age, Date FROM Games WHERE Gname = :Name");
     query.bindValue(":Name", gname);
@@ -39,16 +35,11 @@ void cur_game::set_game(const QString &login, const QString &gname) {
     }
 }
 
-void cur_game::set_db(DataBase* DB)
-{
-    db = DB;
-}
 
 //кнопка купить
 void cur_game::on_pushButton_clicked() {
 
     checker ch;
-    db->set_table("person_games");
     QString price = ui->price_label->text();
     std::string pr = price.toStdString();
     pr = pr.substr(1, pr.size() - 1);
@@ -60,8 +51,8 @@ void cur_game::on_pushButton_clicked() {
 
     // проверка на наличие игры в библиотеке
 
-    if ((!ui->checkBox->isChecked() && db->game_check(LOGIN, gname)) ||
-            (ui->checkBox->isChecked() && LOGIN == another_login && db->game_check(LOGIN, gname))) {
+    if ((!ui->checkBox->isChecked() && DataBase::game_check(LOGIN, gname)) ||
+            (ui->checkBox->isChecked() && LOGIN == another_login && DataBase::game_check(LOGIN, gname))) {
         QMessageBox::StandardButton button = QMessageBox::information(this, "Error of purchase",
                                                                       "You already have this game.",
                                                                       QMessageBox::StandardButton::Ok);
@@ -69,7 +60,7 @@ void cur_game::on_pushButton_clicked() {
             return;
         }
     }
-    db->set_table("Users");
+
     QString age = ui->age_label->text();
 
 
@@ -95,7 +86,7 @@ void cur_game::on_pushButton_clicked() {
             }
         }
         //cуществует ли такой пользователь
-        if (!db->person_exist(another_login)) {
+        if (!DataBase::person_exist(another_login)) {
             QMessageBox::StandardButton button = QMessageBox::warning(this, "Error of purchase",
                                                                       "There is no user with this login",
                                                                       QMessageBox::StandardButton::Ok);
@@ -105,7 +96,7 @@ void cur_game::on_pushButton_clicked() {
         }
 
         //если введенный пользователь уже имеет эту игру
-        if (db->game_check(another_login, gname)) {
+        if (DataBase::game_check(another_login, gname)) {
             QMessageBox::StandardButton button = QMessageBox::information(this, "Error of purchase",
                                                                           "The person with the login " + another_login +
                                                                           " already has this game",
@@ -115,7 +106,7 @@ void cur_game::on_pushButton_clicked() {
             }
         }
         // если введенный пользователь не подходит по возрасту
-        if (!ch.check_age_for_game(db->get_BirthDate(another_login), age)) {
+        if (!ch.check_age_for_game(DataBase::get_BirthDate(another_login), age)) {
             QMessageBox::StandardButton button = QMessageBox::information(this, "Error of purchase",
                                                                           "The user " + another_login +
                                                                           " is not old enough for this game",
@@ -125,10 +116,9 @@ void cur_game::on_pushButton_clicked() {
             }
         }
         //проверка на наличие необходимой суммы
-        if (db->get_money(LOGIN).toDouble() - price.toDouble() >= 0) {
-            db->reduce_money(LOGIN, price, db->get_money(LOGIN));
-            db->set_table("person_games");
-            db->inserIntoTable(another_login, gname);
+        if (DataBase::get_money(LOGIN).toDouble() - price.toDouble() >= 0) {
+            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+            DataBase::inserIntoTable(another_login, gname);
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in the " +
                                                                           another_login + "'s library",
@@ -149,7 +139,7 @@ void cur_game::on_pushButton_clicked() {
         }
     } else {
         //покупка себе (проверки)
-        if (!ch.check_age_for_game(db->get_BirthDate(LOGIN), age)) {
+        if (!ch.check_age_for_game(DataBase::get_BirthDate(LOGIN), age)) {
             QMessageBox::StandardButton button = QMessageBox::information(this, "Error of purchase",
                                                                           "You are not old enough for this game",
                                                                           QMessageBox::StandardButton::Ok);
@@ -157,10 +147,9 @@ void cur_game::on_pushButton_clicked() {
                 return;
             }
         }
-        if ((db->get_money(LOGIN).toDouble() - price.toDouble()) >= 0) {
-            db->reduce_money(LOGIN, price, db->get_money(LOGIN));
-            db->set_table("person_games");
-            db->inserIntoTable(LOGIN, gname);
+        if ((DataBase::get_money(LOGIN).toDouble() - price.toDouble()) >= 0) {
+            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+            DataBase::inserIntoTable(LOGIN, gname);
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in your library",
                                                                           QMessageBox::StandardButton::Ok);

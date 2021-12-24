@@ -8,6 +8,7 @@
 #include "database.h"
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,7 +44,7 @@ private:
     void clear_line();
 
     bool f = 1;
-    DataBase *db;
+    DataBase* db;
     Ui::MainWindow *ui;
     registration *reg_window;
     Shop *shop_window;
