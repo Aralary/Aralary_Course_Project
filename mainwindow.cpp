@@ -55,6 +55,11 @@ void MainWindow::clear_line() {
 
 //кнопка войти
 void MainWindow::on_enter_button_clicked() {
+<<<<<<< Updated upstream
+=======
+    db->connectToDataBase();
+
+>>>>>>> Stashed changes
     ui->label->clear();
     checker ch;
     QString log = ui->login->text();

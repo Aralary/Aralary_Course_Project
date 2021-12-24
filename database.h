@@ -14,6 +14,15 @@
 #include <string>
 #include <QCryptographicHash>
 #include <mutex>
+<<<<<<< Updated upstream
+=======
+#include <thread>
+#include <atomic>
+#include <QThread>
+#include <queue>
+#include <future>
+#include <condition_variable>
+>>>>>>> Stashed changes
 
 //#define DATABASE_HOSTNAME   "host1488"
 //#define DATABASE_NAME       "users_data.db"
@@ -70,25 +79,48 @@ public:
     void closeDataBase();
 private:
 
+<<<<<<< Updated upstream
        // Закрытие базы данных
+=======
+    void answer();
+
+    void DbProcess();
+
+>>>>>>> Stashed changes
     bool openDataBase();        // Открытие базы данных
     bool restoreDataBase();     // Восстановление базы данных
     bool createTable();         // Создание базы таблицы в базе данных
 
     public
     slots:
+<<<<<<< Updated upstream
     bool inserIntoTable(
             const QVariantList &data
             );      // Добавление записей в таблицу
 
 
 
+=======
+    bool inserIntoTable(const QString& table, const QVariantList &data);      // Добавление записей в таблицу
+
+
+>>>>>>> Stashed changes
     bool inserIntoTable(const QString &login, const QString &password,
                         const QString &fname, const QString &sname, const QString &birth, const QString &email);
 
     bool inserIntoTable(const QString &login, const QString &gname);
 
 private:
+<<<<<<< Updated upstream
+=======
+    explicit DataBase(QObject *parent = 0);
+    DataBase(const DataBase& db) = delete;
+    DataBase& operator=(const DataBase&) = delete;
+
+    static std::queue<QSqlQuery> requests;
+    static std::unique_lock<std::mutex> q_lock;
+    static std::condition_variable cv;
+>>>>>>> Stashed changes
     QString DATABASE_HOSTNAME = "host1488";
     QString DATABASE_NAME = "users_data.db";
     QString TABLE = "Users";

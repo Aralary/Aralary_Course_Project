@@ -125,10 +125,16 @@ void cur_game::on_pushButton_clicked() {
             }
         }
         //проверка на наличие необходимой суммы
+<<<<<<< Updated upstream
         if (db->get_money(LOGIN).toDouble() - price.toDouble() >= 0) {
             db->reduce_money(LOGIN, price, db->get_money(LOGIN));
             db->set_table("person_games");
             db->inserIntoTable(another_login, gname);
+=======
+        if (DataBase::get_money(LOGIN).toDouble() - price.toDouble() >= 0) {
+            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+            DataBase::Get_db().inserIntoTable(another_login, gname);
+>>>>>>> Stashed changes
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in the " +
                                                                           another_login + "'s library",
@@ -157,10 +163,16 @@ void cur_game::on_pushButton_clicked() {
                 return;
             }
         }
+<<<<<<< Updated upstream
         if ((db->get_money(LOGIN).toDouble() - price.toDouble()) >= 0) {
             db->reduce_money(LOGIN, price, db->get_money(LOGIN));
             db->set_table("person_games");
             db->inserIntoTable(LOGIN, gname);
+=======
+        if ((DataBase::get_money(LOGIN).toDouble() - price.toDouble()) >= 0) {
+            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+            DataBase::Get_db().inserIntoTable(LOGIN, gname);
+>>>>>>> Stashed changes
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in your library",
                                                                           QMessageBox::StandardButton::Ok);
