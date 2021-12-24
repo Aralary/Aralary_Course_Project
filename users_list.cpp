@@ -23,7 +23,3 @@ void users_list::refresh_list(const QString &login) {
     ui->listView->show();
 }
 
-void users_list::set_db(DataBase *DB)
-{
-    db = DB;
-}

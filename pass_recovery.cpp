@@ -12,11 +12,6 @@ pass_recovery::~pass_recovery() {
     delete ui;
 }
 
-void pass_recovery::set_db(DataBase *DB)
-{
-    db = DB;
-}
-
 //кнопка назад
 void pass_recovery::on_pushButton_clicked() {
     this->close();
@@ -48,14 +43,13 @@ void pass_recovery::on_pushButton_2_clicked() {
             return;
         }
         if (npas1 == npas2) {
-            if (db->check_person(login, npas1)) {
+            if (DataBase::check_person(login, npas1)) {
                 ui->pass_message->setText("The new password must be different from the old one");
                 return;
             }
-            if (db->full_person_check(fname, sname, birth, login, email)) {
-                std::thread th([this, login, npas1]() {
-                    this->db->connectToDataBase();
-                    this->db->change_password(login, npas1);
+            if (DataBase::full_person_check(fname, sname, birth, login, email)) {
+                std::thread th([login, npas1]() {
+                    DataBase::change_password(login, npas1);
                 });
                 th.detach();
                 QMessageBox::StandardButton button = QMessageBox::information(this, "Password recovery",

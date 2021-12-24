@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 #define REGISTRATION_H
 
@@ -27,7 +28,6 @@ public:
     void en_lang();
 
 public slots:
-    void set_db(DataBase* DB);
 
 signals:
     void firstWindow();
@@ -47,7 +47,6 @@ private:
     void on_pushButton_3_clicked();
 
 private:
-    DataBase *db;
     Ui::registration *ui;
 };
 

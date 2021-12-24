@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 namespace Ui {
 class money;
@@ -31,14 +32,12 @@ signals:
 public slots:
     void set_person(const QString &log, const QString &money);
 
-    void set_db(DataBase* DB);
 private slots:
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 
 private:
-    DataBase *db;
     QString old_money;
     QString login;
     Ui::money *ui;

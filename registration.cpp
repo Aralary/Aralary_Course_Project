@@ -14,10 +14,6 @@ registration::~registration() {
     delete ui;
 }
 
-void registration::set_db(DataBase *DB)
-{
-    db = DB;
-}
 
 void registration::clear_window() {
     ui->fname_line->clear();
@@ -96,15 +92,15 @@ void registration::on_pushButton_3_clicked() {
             ui->pass_message->setText("Incorrect password format");
         }
 
-        if (db->person_exist(login)) {
+        qDebug()<<DataBase::person_exist(login);
+        if (DataBase::person_exist(login)) {
             ui->login_label->setText("This Login is already taken");
             return;
         }
-
         email = QString(QCryptographicHash::hash(email.toUtf8(), QCryptographicHash::Sha256).toHex());
-        std::thread th([this, login, password1, fname, sname, birth, email]() {
-            this->db->connectToDataBase();
-            this->db->inserIntoTable(login, password1, fname, sname, birth, email);
+        std::thread th([login, password1, fname, sname, birth, email]() {
+            DataBase::Get_db().connectToDataBase();
+            DataBase::inserIntoTable(login, password1, fname, sname, birth, email);
         });
         th.detach();
         QMessageBox::StandardButton button = QMessageBox::information(this, "Registration",
