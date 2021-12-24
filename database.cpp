@@ -1,8 +1,7 @@
 #include "database.h"
 #include <iostream>
 
-DataBase &DataBase::Get_db()
-{
+DataBase &DataBase::Get_db() {
     static DataBase a;
 
     return a;
@@ -26,7 +25,7 @@ void DataBase::connectToDataBase() {
     }
 }
 
-bool DataBase::check_person(const QString &login, const QString &password){
+bool DataBase::check_person(const QString &login, const QString &password) {
     QSqlQuery query;
     query.prepare("SELECT * FROM Users WHERE Login = :Log AND Password = :Pas");
     query.bindValue(":Log", login);
@@ -80,7 +79,7 @@ bool DataBase::game_check(const QString &login, const QString &gname) {
     return false;
 }
 
-QString DataBase::phone(const QString &login){
+QString DataBase::phone(const QString &login) {
     QSqlQuery query;
     query.prepare("Select Phone FROM Users WHERE Login = :Log");
     query.bindValue(":Log", login);
@@ -162,10 +161,10 @@ bool DataBase::get_favourite(const QString &login, const QString &gname) {
     query.bindValue(":Log", login);
     query.bindValue(":gname", gname);
 
-    if(query.exec()){
+    if (query.exec()) {
         query.first();
         return query.value(0).toBool();
-    }else{
+    } else {
         qDebug() << "error";
         return false;
     }
@@ -280,7 +279,7 @@ bool DataBase::createTable() {
 
 /* Метод для вставки записи в базу данных
  * */
-bool DataBase::inserIntoTable(const QString& table, const QVariantList &data) {
+bool DataBase::inserIntoTable(const QString &table, const QVariantList &data) {
     /* Запрос SQL формируется из QVariantList,
      * в который передаются данные для вставки в таблицу.
      * */
@@ -380,7 +379,7 @@ bool DataBase::inserIntoTable(const QString &login, const QString &gname) {
     data.append(login);
     data.append(gname);
 
-    if (inserIntoTable("person_games",data)) {
+    if (inserIntoTable("person_games", data)) {
         return true;
     }
     return false;

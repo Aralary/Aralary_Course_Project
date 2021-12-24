@@ -2,8 +2,8 @@
 #include "ui_cur_game.h"
 
 cur_game::cur_game(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::cur_game) {
+        QDialog(parent),
+        ui(new Ui::cur_game) {
     ui->setupUi(this);
     ui->help_label->hide();
     ui->person->hide();
@@ -52,7 +52,7 @@ void cur_game::on_pushButton_clicked() {
     // проверка на наличие игры в библиотеке
 
     if ((!ui->checkBox->isChecked() && DataBase::game_check(LOGIN, gname)) ||
-            (ui->checkBox->isChecked() && LOGIN == another_login && DataBase::game_check(LOGIN, gname))) {
+        (ui->checkBox->isChecked() && LOGIN == another_login && DataBase::game_check(LOGIN, gname))) {
         QMessageBox::StandardButton button = QMessageBox::information(this, "Error of purchase",
                                                                       "You already have this game.",
                                                                       QMessageBox::StandardButton::Ok);
@@ -117,18 +117,26 @@ void cur_game::on_pushButton_clicked() {
         }
         //проверка на наличие необходимой суммы
         if (DataBase::get_money(LOGIN).toDouble() - price.toDouble() >= 0) {
-            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
-            DataBase::inserIntoTable(another_login, gname);
+
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in the " +
                                                                           another_login + "'s library",
                                                                           QMessageBox::StandardButton::Ok);
             if (button == QMessageBox::StandardButton::Ok) {
-                emit refresh_money(LOGIN);
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+                    DataBase::inserIntoTable(another_login, gname);
+                    emit refresh_money(LOGIN);
+
+                });
+                th.join();
+                emit lost_connection();
                 ui->person->clear();
                 on_checkBox_stateChanged(0);
                 close();
             }
+
         } else {
             QMessageBox::StandardButton button = QMessageBox::warning(this, "Error of purchase",
                                                                       "You don't have enough money",
@@ -148,16 +156,20 @@ void cur_game::on_pushButton_clicked() {
             }
         }
         if ((DataBase::get_money(LOGIN).toDouble() - price.toDouble()) >= 0) {
-            DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
-            DataBase::inserIntoTable(LOGIN, gname);
             QMessageBox::StandardButton button = QMessageBox::information(this, "Purchase",
                                                                           "Congratulations to you! The game is now in your library",
                                                                           QMessageBox::StandardButton::Ok);
             if (button == QMessageBox::StandardButton::Ok) {
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::reduce_money(LOGIN, price, DataBase::get_money(LOGIN));
+                    DataBase::inserIntoTable(LOGIN, gname);
+                    emit refresh_money(LOGIN);
+                });
 
-                emit refresh_money(LOGIN);
+                th.join();
+                emit lost_connection();
                 ui->person->clear();
-
                 close();
             }
         } else {

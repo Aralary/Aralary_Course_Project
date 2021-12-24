@@ -9,7 +9,7 @@
 #include <QThread>
 
 namespace Ui {
-class money;
+    class money;
 }
 
 class money : public QMainWindow {
@@ -22,18 +22,25 @@ public:
 
     void clear();
 
-signals:
-    void firstWindow();
+    signals:
+            void firstWindow();
 
     void send_status();
 
     void refresh(const QString &log);
 
-public slots:
-    void set_person(const QString &log, const QString &money);
+    void lost_connection();
 
-private slots:
-    void on_pushButton_clicked();
+public
+    slots:
+            void set_person(
+    const QString &log,
+    const QString &money
+    );
+
+private
+    slots:
+            void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 

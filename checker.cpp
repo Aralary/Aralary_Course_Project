@@ -1,8 +1,6 @@
 #include "checker.h"
 
-checker::checker() {
-
-}
+checker::checker() {}
 
 bool checker::Login_check(const QString &login) {
     for (const auto &it: login) {

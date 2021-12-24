@@ -12,7 +12,7 @@
 
 
 namespace Ui {
-class registration;
+    class registration;
 }
 
 class registration : public QMainWindow {
@@ -27,17 +27,23 @@ public:
 
     void en_lang();
 
-public slots:
+public
+    slots:
 
-signals:
+            signals
+    :
+
     void firstWindow();
+
+    void lost_connection();
+
 private:
 
     void clear_window();
 
-    private
+private
     slots:
-    void on_pushButton_clicked();
+            void on_pushButton_clicked();
 
     void on_checkBox_2_stateChanged(int);
 

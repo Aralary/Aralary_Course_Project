@@ -8,7 +8,7 @@
 #include <QThread>
 
 namespace Ui {
-class pass_recovery;
+    class pass_recovery;
 }
 
 class pass_recovery : public QMainWindow {
@@ -22,13 +22,20 @@ public:
     void en_lang();
 
     void ru_lang();
-public slots:
-signals:
+
+public
+    slots:
+
+            signals
+    :
+
     void firstWindow();
 
-    private
+    void lost_connetcion();
+
+private
     slots:
-    void on_pushButton_clicked();
+            void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 

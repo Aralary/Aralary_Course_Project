@@ -4,8 +4,8 @@
 #include <QDebug>
 
 money::money(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::money) {
+        QMainWindow(parent),
+        ui(new Ui::money) {
     ui->setupUi(this);
 }
 
@@ -46,13 +46,18 @@ void money::on_pushButton_clicked() {
                                                                       "Do you want to debit money from the linked number?",
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
-                DataBase::add_money(login, add_cash, old_money);
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::add_money(login, add_cash, old_money);
+                    emit send_status();
+                    emit refresh(login);
+                });
+                th.join();
                 close();
                 clear();
-                emit send_status();
-                emit refresh(login);
                 emit firstWindow();
             }
+            emit lost_connection();
         } else {
             QMessageBox::StandardButton reply = QMessageBox::warning(this, "Attention",
                                                                      "You don't have a linked number",
@@ -61,7 +66,6 @@ void money::on_pushButton_clicked() {
                 return;
             }
         }
-
     } else {
         number = QString(QCryptographicHash::hash(number.toUtf8(), QCryptographicHash::Sha256).toHex());
         if (db_number != number) {
@@ -69,36 +73,51 @@ void money::on_pushButton_clicked() {
                                                                       "Do you want to link this phone number to your account?",
                                                                       QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
-
-                DataBase::change_phone(login, number);
-                DataBase::add_money(login, add_cash, old_money);
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::change_phone(login, number);
+                    DataBase::add_money(login, add_cash, old_money);
+                    emit send_status();
+                    emit refresh(login);
+                });
+                th.join();
                 close();
                 clear();
-                emit send_status();
-                emit refresh(login);
                 emit firstWindow();
             } else {
-                DataBase::add_money(login, add_cash, old_money);
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::add_money(login, add_cash, old_money);
+                    emit send_status();
+                    emit refresh(login);
+                });
+                th.join();
                 close();
                 clear();
-                emit send_status();
-                emit refresh(login);
                 emit firstWindow();
             }
+            emit lost_connection();
         } else {
             QMessageBox::StandardButton reply = QMessageBox::information(this, "Replenishment",
                                                                          "You used a linked number. \n"
                                                                          "You don't need to enter a phone number to top up your balance",
                                                                          QMessageBox::StandardButton::Ok);
             if (reply == QMessageBox::Ok) {
-                DataBase::add_money(login, add_cash, old_money);
-                clear();
+                std::thread th([&]() {
+                    DataBase::Get_db().connectToDataBase();
+                    DataBase::add_money(login, add_cash, old_money);
+
+                    emit send_status();
+                    emit refresh(login);
+                });
+
+                th.join();
                 close();
-                emit send_status();
-                emit refresh(login);
+                clear();
                 emit firstWindow();
             }
 
+            emit lost_connection();
         }
     }
 

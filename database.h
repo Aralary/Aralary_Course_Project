@@ -33,7 +33,7 @@
 class DataBase : public QObject {
     Q_OBJECT
 public:
-    static DataBase& Get_db();
+    static DataBase &Get_db();
 
 
     ~DataBase();
@@ -50,8 +50,9 @@ public:
 
     static bool person_exist(const QString &login);
 
-    static bool full_person_check(const QString &fname, const QString &sname, const QString &birth, const QString &login,
-                           const QString &email);
+    static bool
+    full_person_check(const QString &fname, const QString &sname, const QString &birth, const QString &login,
+                      const QString &email);
 
     static bool game_check(const QString &login, const QString &gname);
 
@@ -72,28 +73,30 @@ public:
     bool createTable(const QString &table);
 
     void closeDataBase();       // Закрытие базы данных
-
+    bool createTable();         // Создание базы таблицы в базе данных
 private:
 
     bool openDataBase();        // Открытие базы данных
 
     bool restoreDataBase();     // Восстановление базы данных
-    bool createTable();         // Создание базы таблицы в базе данных
 
-    public
+public
     slots:
-    static bool inserIntoTable(const QString& table, const QVariantList &data);      // Добавление записей в таблицу
+
+    static bool inserIntoTable(const QString &table, const QVariantList &data);      // Добавление записей в таблицу
 
 
     static bool inserIntoTable(const QString &login, const QString &password,
-                        const QString &fname, const QString &sname, const QString &birth, const QString &email);
+                               const QString &fname, const QString &sname, const QString &birth, const QString &email);
 
     static bool inserIntoTable(const QString &login, const QString &gname);
 
 private:
     explicit DataBase(QObject *parent = 0);
-    DataBase(const DataBase& db) = delete;
-    DataBase& operator=(const DataBase&) = delete;
+
+    DataBase(const DataBase &db) = delete;
+
+    DataBase &operator=(const DataBase &) = delete;
 
     QString DATABASE_HOSTNAME = "host1488";
     QString DATABASE_NAME = "users_data.db";

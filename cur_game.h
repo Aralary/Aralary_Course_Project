@@ -8,7 +8,7 @@
 #include <QThread>
 
 namespace Ui {
-class cur_game;
+    class cur_game;
 }
 
 class cur_game : public QDialog {
@@ -20,15 +20,23 @@ public:
     ~cur_game();
 
 
-public slots:
-    void set_game(const QString &login, const QString &gname);
-
-signals:
-    void refresh_money(const QString &login);
-
-    private
+public
     slots:
-    void on_pushButton_clicked();
+            void set_game(
+    const QString &login,
+    const QString &gname
+    );
+
+    signals:
+            void refresh_money(
+    const QString &login
+    );
+
+    void lost_connection();
+
+private
+    slots:
+            void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
 

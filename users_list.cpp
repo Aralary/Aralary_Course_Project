@@ -2,8 +2,8 @@
 #include "ui_users_list.h"
 
 users_list::users_list(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::users_list) {
+        QMainWindow(parent),
+        ui(new Ui::users_list) {
     ui->setupUi(this);
 }
 
