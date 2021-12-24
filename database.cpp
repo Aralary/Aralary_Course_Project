@@ -1,10 +1,25 @@
 #include "database.h"
 #include <iostream>
 
+<<<<<<< Updated upstream
 DataBase::DataBase(QObject *parent) : QObject(parent) {
     connectToDataBase();
 }
 
+=======
+DataBase &DataBase::Get_db()
+{
+    static DataBase a;
+    return a;
+}
+
+DataBase::DataBase(QObject *parent) : QObject(parent) {
+    connectToDataBase();
+//    q_lock = std::unique_lock<std::mutex>();
+//    requests = std::queue<QSqlQuery>();
+}
+
+>>>>>>> Stashed changes
 DataBase::~DataBase() { closeDataBase(); }
 
 /* Методы для подключения к базе данных
@@ -60,10 +75,8 @@ bool DataBase::person_exist(const QString &login) {
     query.bindValue(":Log", login);
     if (!query.exec()) {
         return false;
-    } else {
-        return query.next();
     }
-    return false;
+    return query.next();
 }
 
 bool DataBase::game_check(const QString &login, const QString &gname) {
@@ -228,6 +241,17 @@ bool DataBase::openDataBase() {
 /* Метод закрытия базы данных
  * */
 void DataBase::closeDataBase() { db.close(); }
+
+void DataBase::DbProcess()
+{
+    for (;;) {
+        cv.wait(q_lock);
+        while (!requests.empty()) {
+            requests.front().exec();
+            requests.pop();
+        }
+    }
+}
 
 /* Метод для создания таблицы в базе данных
  * */
