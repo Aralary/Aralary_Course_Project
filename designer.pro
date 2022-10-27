@@ -9,36 +9,36 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    checker.cpp \
-    cur_game.cpp \
-    database.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    money.cpp \
-    pass_recovery.cpp \
-    registration.cpp \
-    shop.cpp \
-    users_list.cpp
+    source/checker.cpp \
+    source/cur_game.cpp \
+    source/database.cpp \
+    source/main.cpp \
+    source/mainwindow.cpp \
+    source/money.cpp \
+    source/pass_recovery.cpp \
+    source/registration.cpp \
+    source/shop.cpp \
+    source/users_list.cpp
 
 HEADERS += \
-    checker.h \
-    cur_game.h \
-    database.h \
-    mainwindow.h \
-    money.h \
-    pass_recovery.h \
-    registration.h \
-    shop.h \
-    users_list.h
+    headers/checker.h \
+    headers/cur_game.h \
+    headers/database.h \
+    headers/mainwindow.h \
+    headers/money.h \
+    headers/pass_recovery.h \
+    headers/registration.h \
+    headers/shop.h \
+    headers/users_list.h
 
 FORMS += \
-    cur_game.ui \
-    mainwindow.ui \
-    money.ui \
-    pass_recovery.ui \
-    registration.ui \
-    shop.ui \
-    users_list.ui
+    graphic/cur_game.ui \
+    graphic/mainwindow.ui \
+    graphic/money.ui \
+    graphic/pass_recovery.ui \
+    graphic/registration.ui \
+    graphic/shop.ui \
+    graphic/users_list.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

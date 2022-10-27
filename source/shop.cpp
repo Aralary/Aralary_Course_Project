@@ -1,31 +1,29 @@
-#include "shop.h"
+#include "headers/shop.h"
 #include "ui_shop.h"
 
 Shop::Shop(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::Shop) {
+        QMainWindow(parent),
+        ui(new Ui::Shop) {
     ui->setupUi(this);
-    db = new DataBase;
-    db->connectToDataBase();
     ui->vkladka_label->clear();
     ui->listView->hide();
     ui->pushButton_6->hide();
     ui->pushButton_7->hide();
     m_window = new money(this);
+
     connect(m_window, &money::firstWindow, this, &Shop::show);
-    connect(this, &Shop::sent_db, m_window, &money::set_db);
     connect(this, &Shop::sent_login, m_window, &money::set_person);
     connect(m_window, &money::refresh, this, &Shop::set_person);
+    connect(m_window, &money::lost_connection, this, &Shop::refreshrer);
     connect(m_window, &money::send_status, this, &Shop::set_status);
 
     temp_game = new cur_game(this);
     connect(temp_game, &cur_game::refresh_money, this, &Shop::set_person);
     connect(this, &Shop::sent_game, temp_game, &cur_game::set_game);
-    connect(this, &Shop::sent_db, temp_game, &cur_game::set_db);
+    connect(temp_game, &cur_game::lost_connection, this, &Shop::refreshrer);
 
     ulist = new users_list(this);
     connect(this, &Shop::get_users_list, ulist, &users_list::refresh_list);
-    connect(this, &Shop::sent_db, ulist, &users_list::set_db);
 }
 
 Shop::~Shop() {
@@ -50,32 +48,29 @@ void Shop::on_pushButton_clicked() {
 
 //слот для установки данных пользователя после входа
 void Shop::set_person(const QString &login) {
-    {
-        LOGIN = login;
-        ui->login_label->setText(login);
-        ui->cash_label->setText("$" + db->get_money(login));
-    }
+    LOGIN = login;
+    ui->login_label->setText(login);
+    ui->cash_label->setText("$" + DataBase::get_money(login));
     on_pushButton_3_clicked();
 }
 
-void Shop::set_db(DataBase *DB)
-{
-    db = DB;
-}
 
 void Shop::set_status() {
     ui->statusbar->showMessage("You have successfully replenished your balance");
 }
 
+void Shop::refreshrer() {
+    DataBase::Get_db().connectToDataBase();
+}
+
 
 //кнопка пополнить баланс
 void Shop::on_pushButton_4_clicked() {
-    QString money = ui->cash_label->text();
-    std::string cash = money.toStdString();
-    cash = cash.substr(1, cash.size() - 1);
-    money = QString::fromStdString(cash);
-    std::thread th([this, money]() {
-        emit sent_db(db);
+    std::thread th([this]() {
+        QString money = ui->cash_label->text();
+        std::string cash = money.toStdString();
+        cash = cash.substr(1, cash.size() - 1);
+        money = QString::fromStdString(cash);
         emit sent_login(LOGIN, money);
     });
     th.detach();
@@ -119,7 +114,6 @@ void Shop::on_tableView_doubleClicked(const QModelIndex &index) {
         str = (index.model()->data(index.model()->index(index.row(), index.column() - 1))).toString();
     }
     std::thread th([this, str]() {
-        emit sent_db(db);
         emit sent_game(LOGIN, str);
     });
     th.detach();
@@ -129,20 +123,20 @@ void Shop::on_tableView_doubleClicked(const QModelIndex &index) {
 
 //двойной клин на игру из вашей библиотеки
 void Shop::on_listView_doubleClicked(const QModelIndex &index) {
-    db->set_table("person_games");
     QString str = index.data(0).toString();
 
     if (ui->vkladka_label->text() == "Game library: your favourite games") {
         QMessageBox::StandardButton reply = QMessageBox::question(this, "Attention",
                                                                   "Are you sure you want to remove the game " + str +
                                                                   " from favorites?", QMessageBox::StandardButton::Yes |
-                                                                  QMessageBox::StandardButton::No);
+                                                                                      QMessageBox::StandardButton::No);
         if (reply == QMessageBox::StandardButton::Yes) {
-            db->change_favourite(LOGIN, str);
+
+            DataBase::change_favourite(LOGIN, str);
         }
         on_pushButton_7_clicked();
     } else {
-        if (db->get_favourite(LOGIN, str)) {
+        if (DataBase::get_favourite(LOGIN, str)) {
             QMessageBox::information(this, "Attention", "Game " + str + " is already in your favorites list");
         } else {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Attention",
@@ -151,9 +145,8 @@ void Shop::on_listView_doubleClicked(const QModelIndex &index) {
                                                                       QMessageBox::StandardButton::Yes |
                                                                       QMessageBox::StandardButton::No);
             if (reply == QMessageBox::StandardButton::Yes) {
-                db->change_favourite(LOGIN, str);
+                DataBase::change_favourite(LOGIN, str);
             }
-            on_pushButton_6_clicked();
         }
     }
     return;
@@ -161,6 +154,7 @@ void Shop::on_listView_doubleClicked(const QModelIndex &index) {
 
 //конпка все ваши игры
 void Shop::on_pushButton_6_clicked() {
+
     ui->vkladka_label->setText("Game library: all your games");
     model = new QSqlQueryModel();
     QSqlQuery query;
@@ -202,7 +196,6 @@ void Shop::on_pushButton_7_clicked() {
 //кнопка все пользователи
 void Shop::on_pushButton_5_clicked() {
     std::thread th([this]() {
-        emit sent_db(db);
         emit get_users_list(LOGIN);
     });
     th.detach();

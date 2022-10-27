@@ -1,25 +1,24 @@
-#include "mainwindow.h"
+#include "headers/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+        : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->label->clear();
 
-    db = new DataBase();
-
+    db = &DataBase::Get_db();
+    db->connectToDataBase();
     reg_window = new registration();
-    connect(this, &MainWindow::sent_db, reg_window, &registration::set_db);
     connect(reg_window, &registration::firstWindow, this, &MainWindow::show);
+    connect(reg_window, &registration::lost_connection, this, &MainWindow::refresh_connection);
 
     rec_window = new pass_recovery();
     connect(rec_window, &pass_recovery::firstWindow, this, &MainWindow::show);
-    connect(this, &MainWindow::sent_db, rec_window, &pass_recovery::set_db);
+    connect(reg_window, &registration::lost_connection, this, &MainWindow::refresh_connection);
 
     shop_window = new Shop();
     connect(shop_window, &Shop::firstWindow, this, &MainWindow::show);
-    connect(this, &MainWindow::sent_db, shop_window, &Shop::set_db);
     connect(this, &MainWindow::sent_person, shop_window, &Shop::set_person);
 }
 
@@ -30,8 +29,11 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::refresh_connection() {
+    DataBase::Get_db().connectToDataBase();
+}
+
 void MainWindow::on_reg_button_clicked() {
-    emit sent_db(db);
     clear_line();
     reg_window->show();
     hide();
@@ -63,15 +65,12 @@ void MainWindow::on_enter_button_clicked() {
         ui->label->setText("Incorrect login or password");
         return;
     }
+
     if (db->check_person(log, pas)) {
         clear_line();
         close();
         shop_window->show();
-        std::thread th([this, log]() {
-            emit sent_db(this->db);
-            emit sent_person(log);
-        });
-        th.detach();
+        emit sent_person(log);
     } else {
         ui->label->setText("Incorrect login or password");
     }
@@ -81,7 +80,6 @@ void MainWindow::on_enter_button_clicked() {
 void MainWindow::on_refresh_pass_button_clicked() {
     clear_line();
     hide();
-    emit sent_db(db);
     rec_window->show();
 }
 

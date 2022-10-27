@@ -8,6 +8,7 @@
 #include "database.h"
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,9 +22,15 @@ public:
 
     ~MainWindow();
 
-    private
+public
     slots:
-    void on_reg_button_clicked();
+
+            void refresh_connection();
+
+private
+    slots:
+
+            void on_reg_button_clicked();
 
     void on_show_pass0_stateChanged(int);
 
@@ -32,9 +39,9 @@ public:
     void on_refresh_pass_button_clicked();
 
 
-signals:
+    signals:
 
-    void sent_db(DataBase* DB);
+            void sent_db(DataBase * DB);
 
     void sent_person(const QString &login);
 

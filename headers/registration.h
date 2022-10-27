@@ -6,12 +6,13 @@
 #include<stdio.h>
 #include "checker.h"
 #include <thread>
+#include <QThread>
 
 #define REGISTRATION_H
 
 
 namespace Ui {
-class registration;
+    class registration;
 }
 
 class registration : public QMainWindow {
@@ -26,18 +27,23 @@ public:
 
     void en_lang();
 
-public slots:
-    void set_db(DataBase* DB);
+public
+    slots:
 
-signals:
+            signals
+    :
+
     void firstWindow();
+
+    void lost_connection();
+
 private:
 
     void clear_window();
 
-    private
+private
     slots:
-    void on_pushButton_clicked();
+            void on_pushButton_clicked();
 
     void on_checkBox_2_stateChanged(int);
 
@@ -47,7 +53,6 @@ private:
     void on_pushButton_3_clicked();
 
 private:
-    DataBase *db;
     Ui::registration *ui;
 };
 

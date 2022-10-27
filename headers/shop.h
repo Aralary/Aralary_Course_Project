@@ -9,9 +9,10 @@
 #include <QMessageBox>
 #include "users_list.h"
 #include <thread>
+#include <QThread>
 
 namespace Ui {
-class Shop;
+    class Shop;
 }
 
 class Shop : public QMainWindow {
@@ -22,8 +23,8 @@ public:
 
     ~Shop();
 
-signals:
-    void firstWindow();
+    signals:
+            void firstWindow();
 
     void sent_login(const QString &login, const QString &money);
 
@@ -31,17 +32,21 @@ signals:
 
     void get_users_list(const QString &login);
 
-    void sent_db(DataBase* DB);
+    void lost_connection();
 
-public slots:
-    void set_person(const QString &login);
-
-    void set_db(DataBase* DB);
+public
+    slots:
+            void set_person(
+    const QString &login
+    );
 
     void set_status();
 
-private slots:
-    void on_pushButton_clicked();
+    void refreshrer();
+
+private
+    slots:
+            void on_pushButton_clicked();
 
 
     void on_pushButton_4_clicked();
@@ -63,7 +68,6 @@ private slots:
 
 private:
     bool add_money_Flag = 0;
-    DataBase* db;
     users_list *ulist;
     cur_game *temp_game;
     QSqlQueryModel *model;

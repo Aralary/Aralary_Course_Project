@@ -1,12 +1,12 @@
-#include "registration.h"
+#include "headers/registration.h"
 #include "ui_registration.h"
-#include "mainwindow.h"
+#include "headers/mainwindow.h"
 #include <QMessageBox>
 #include <sstream>
 
 registration::registration(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::registration) {
+        QMainWindow(parent),
+        ui(new Ui::registration) {
     ui->setupUi(this);
 }
 
@@ -14,10 +14,6 @@ registration::~registration() {
     delete ui;
 }
 
-void registration::set_db(DataBase *DB)
-{
-    db = DB;
-}
 
 void registration::clear_window() {
     ui->fname_line->clear();
@@ -62,19 +58,19 @@ void registration::on_pushButton_3_clicked() {
     checker ch;
 
     QString fname = QString(
-                QCryptographicHash::hash(ui->fname_line->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+            QCryptographicHash::hash(ui->fname_line->text().toUtf8(), QCryptographicHash::Sha256).toHex());
     QString sname = QString(
-                QCryptographicHash::hash(ui->sname_line->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+            QCryptographicHash::hash(ui->sname_line->text().toUtf8(), QCryptographicHash::Sha256).toHex());
     QString birth = ui->birth_line->text();
     QString email = ui->email_line->text();
     QString login = ui->log_line->text();
     QString password1 = QString(
-                QCryptographicHash::hash(ui->pass1->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+            QCryptographicHash::hash(ui->pass1->text().toUtf8(), QCryptographicHash::Sha256).toHex());
     QString password2 = QString(
-                QCryptographicHash::hash(ui->pass2->text().toUtf8(), QCryptographicHash::Sha256).toHex());
+            QCryptographicHash::hash(ui->pass2->text().toUtf8(), QCryptographicHash::Sha256).toHex());
 
     if (!login.isEmpty() && !password1.isEmpty() && !password2.isEmpty() && !fname.isEmpty() && !sname.isEmpty() &&
-            !email.isEmpty()) {
+        !email.isEmpty()) {
 
         if (!ch.Name_check(ui->fname_line->text()) || !ch.Name_check(ui->sname_line->text())) {
             ui->name_message->setText("Incorrect Fname or Sname");
@@ -94,17 +90,18 @@ void registration::on_pushButton_3_clicked() {
         }
         if (!ch.Pass_check(ui->pass1->text()) || !ch.Pass_check(ui->pass2->text())) {
             ui->pass_message->setText("Incorrect password format");
+            return;
         }
 
-        if (db->person_exist(login)) {
+        if (DataBase::person_exist(login)) {
             ui->login_label->setText("This Login is already taken");
             return;
         }
 
         email = QString(QCryptographicHash::hash(email.toUtf8(), QCryptographicHash::Sha256).toHex());
-        std::thread th([this, login, password1, fname, sname, birth, email]() {
-            this->db->connectToDataBase();
-            this->db->inserIntoTable(login, password1, fname, sname, birth, email);
+        std::thread th([login, password1, fname, sname, birth, email]() {
+            DataBase::Get_db().connectToDataBase();
+            DataBase::inserIntoTable(login, password1, fname, sname, birth, email);
         });
         th.detach();
         QMessageBox::StandardButton button = QMessageBox::information(this, "Registration",
@@ -114,6 +111,7 @@ void registration::on_pushButton_3_clicked() {
             close();
             clear_window();
             emit firstWindow();
+            emit lost_connection();
         }
     } else {
         QMessageBox::information(this, "Attention", "Please fill in all empty lines");

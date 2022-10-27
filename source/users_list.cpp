@@ -1,9 +1,9 @@
-#include "users_list.h"
+#include "headers/users_list.h"
 #include "ui_users_list.h"
 
 users_list::users_list(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::users_list) {
+        QMainWindow(parent),
+        ui(new Ui::users_list) {
     ui->setupUi(this);
 }
 
@@ -23,7 +23,3 @@ void users_list::refresh_list(const QString &login) {
     ui->listView->show();
 }
 
-void users_list::set_db(DataBase *DB)
-{
-    db = DB;
-}
